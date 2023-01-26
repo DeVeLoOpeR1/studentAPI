@@ -1,5 +1,8 @@
 package com.example.SudentBase;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -9,50 +12,36 @@ import java.util.List;
 @RestController
 public class studentController {
     //crud post get put delete
-    HashMap<Integer,Student> stud = new HashMap<Integer,Student>();
+
+    @Autowired
+    StudentService studentService;
     @PostMapping("/add_student")
-    public String addStudent(@RequestBody Student student){
-        stud.put(student.getStudentId(),student);
-        return " Student success fully Added ";
+    public ResponseEntity addStudent(@RequestBody Student student){
+        return new ResponseEntity<>(studentService.addStudent(student), HttpStatus.IM_USED);
     }
     @GetMapping("/get_student")
-    public Student getStudent(@RequestParam("q") int studentId){
-        return stud.get(studentId);
+    public ResponseEntity getStudent(@RequestParam("q") int studentId){
+
+        return new ResponseEntity<>(studentService.getStudent(studentId),HttpStatus.ACCEPTED);
     }
     @PutMapping("/update_student")
-    public String updateStudent(@RequestBody Student student){
-        stud.put(student.getStudentId(), student);
-        return "Student details updated successfully ";
+    public ResponseEntity updateStudent(@RequestBody Student student){
+        return new ResponseEntity(studentService.updateStudent(student),HttpStatus.ACCEPTED);
     }
     @DeleteMapping("/delete_student/{id}")
-    public String deleteStudent(@PathVariable("id") int studentId){
-         stud.remove(studentId);
-         return "Student deleted successfully";
+    public ResponseEntity deleteStudent(@PathVariable("id") int studentId){
+
+         return new ResponseEntity(studentService.deleteStudent(studentId),HttpStatus.OK);
     }
     @GetMapping("/student_name")
-    public Student getStudent(@RequestParam("q") String name){
-        Student out = null;
-        for(int i : stud.keySet())
-        {
+    public ResponseEntity getStudent(@RequestParam("q") String name){
 
-            String tem = stud.get(i).getName();
-            if(name.equals(tem))
-            {
-                System.out.println("match found");
-                out = stud.get(i);
-                break;
-            }
-        }
-        return out;
+        return new ResponseEntity(studentService.getStudent(name),HttpStatus.ACCEPTED);
 
     }
     @GetMapping("/get_student_list")
-    public List<Student> getStudent(){
-        ArrayList<Student> students = new ArrayList<>();
-        for(int i:stud.keySet()){
-            students.add(stud.get(i));
-        }
-        return students;
+    public ResponseEntity getStudent(){
+        return new ResponseEntity<>(studentService.getStudent(),HttpStatus.OK);
     }
 
 
